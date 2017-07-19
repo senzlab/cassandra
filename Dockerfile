@@ -24,7 +24,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 # install curl
 RUN apt-get update && apt-get install -y curl
 
-# instal cassandra
+# install cassandra
 ENV MIRROR http://apache.mirrors.pair.com/
 ENV VERSION 3.11.0
 RUN curl $MIRROR/cassandra/$VERSION/apache-cassandra-$VERSION-bin.tar.gz | tar -xzf - -C /opt \
