@@ -21,40 +21,33 @@ RUN rm -rf /var/cache/oracle-jdk8-installer
 # set JAVA_HOME
 ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
 
-# cassandra version
-ENV CASSANDRA_VERSION 3.11.0
-
-# install cassandra
-RUN apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys A278B781FE4B2BDA  
-RUN echo 'deb http://www.apache.org/dist/cassandra/debian 311x main' >> /etc/apt/sources.list.d/cassandra.list
-RUN apt-get update \
-	&& apt-get install -y cassandra="$CASSANDRA_VERSION" \
-	&& rm -rf /var/lib/apt/lists/*
-
-# https://issues.apache.org/jira/browse/CASSANDRA-11661
-RUN sed -ri 's/^(JVM_PATCH_VERSION)=.*/\1=25/' /etc/cassandra/cassandra-env.sh
-
-ENV CASSANDRA_CONFIG /etc/cassandra
-
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
-
-RUN mkdir -p /var/lib/cassandra "$CASSANDRA_CONFIG" \
-	&& chown -R cassandra:cassandra /var/lib/cassandra /usr/share/cassandra "$CASSANDRA_CONFIG" \
-	&& chmod 777 /var/lib/cassandra /usr/share/cassandra "$CASSANDRA_CONFIG"
-VOLUME /var/lib/cassandra
-
 # install curl
 RUN apt-get update && apt-get install -y curl
 
-# lucene version
+# instal cassandra
+ENV MIRROR http://apache.mirrors.pair.com/
+ENV VERSION 3.11.0
+RUN curl $MIRROR/cassandra/$VERSION/apache-cassandra-$VERSION-bin.tar.gz | tar -xzf - -C /opt \
+    && mv /opt/apache-cassandra-$VERSION /opt/cassandra \
+    && mkdir -p /tmp/cassandra
+
+# install lucene plugin
 ENV PLUGIN_VERSION 3.11.0.0
 RUN curl -LO http://search.maven.org/remotecontent\?filepath\=com/stratio/cassandra/cassandra-lucene-index-plugin/3.11.0.0/cassandra-lucene-index-plugin-3.11.0.0.jar
-RUN mv cassandra-lucene-index-plugin-3.11.0.0.jar /usr/share/cassandra/lib
+RUN mv cassandra-lucene-index-plugin-3.11.0.0.jar /opt/cassandra/lib
 
-EXPOSE 9042 9160
+# post installation config
+ADD configure.sh /opt/cassandra
+RUN chmod +x /opt/cassandra/configure.sh
+ENTRYPOINT ["/opt/cassandra/configure.sh"]
 
+RUN chown -R cassandra:cassandra /opt/cassandra
+
+# start
 USER cassandra
+WORKDIR /opt/cassandra
 
-CMD ["cassandra", "-f"]
+# 7000: ipc; 7001: tls ipc; 7199: jmx; 9042: cql; 9160: thrift
+EXPOSE 7000 7001 7199 9042 9160
+
+CMD ["/opt/cassandra/bin/cassandra", "-f"]
