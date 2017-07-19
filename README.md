@@ -3,7 +3,9 @@
 Dockerized cassandra with lucene plugin. The purpose of this cassandra project 
 is to keep documents with full text serach functionality  
 
-# usage
+We are creating REST API againt this document storage. 
+
+# cassandra usage
 
 ## create table
 ```sql
@@ -49,3 +51,34 @@ SELECT * FROM documents WHERE expr(documents_index, '{
     ]
 }');
 ```
+
+# REST API usage 
+
+## API end points
+```
+dev.localhost:8080/api/v1/documents
+dev.localhost:8080/api/v1/documents/1
+dev.localhost:8080/api/v1/documents?name=eranga
+```
+
+## create document 
+```
+# http POST 
+curl 
+    -H "Content-Type: application/json" 
+    -X POST http://localhost:8080/api/v1/documents 
+    -d 
+    '{
+        "name": "telia",
+        "id": 3,
+        "date": "2017/08/13",
+        "docType": "INVOICE",
+        "partyInfo": {
+            "id": 2,
+            "name": "eranga",
+            "orgNo": "688812",
+            "vatNo": "231122"
+        }
+    }'
+```
+
