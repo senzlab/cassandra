@@ -50,6 +50,16 @@ SELECT * FROM documents WHERE expr(documents_index, '{
         {type:"match", field:"doctype", value:"invoice"}
     ]
 }');
+
+-- with wildcard filter
+SELECT * FROM documents WHERE expr(documents_index, '{
+    filter: [
+        {type: "wildcard", field:"name", value:"eraga"}, 
+        {type: "wildcard", field:"doctype", value:"INVOICE"}, 
+        {type: "wildcard", field:"partyname", value:"*"}, 
+        {type: "wildcard", field:"orgno", value:"*"}
+    ]
+}')
 ```
 
 # REST API usage 
@@ -64,11 +74,10 @@ dev.localhost:8080/api/v1/documents?name=eranga
 ## create document 
 ```
 # http POST 
-curl 
-    -H "Content-Type: application/json" 
-    -X POST http://localhost:8080/api/v1/documents 
-    -d 
-    '{
+curl \
+    -H "Content-Type: application/json" \
+    -X POST http://localhost:8080/api/v1/documents \
+    -d '{
         "name": "telia",
         "id": 3,
         "date": "2017/08/13",
