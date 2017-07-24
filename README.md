@@ -9,18 +9,21 @@ We are creating REST API againt this document storage.
 
 ## create table
 ```sql
--- create keyspace
+-- create keyspace with replication 1
+CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 1};
+
+-- create keyspace with replication 3
 CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 3};
-use senz
 
 -- create table
+use senz
 CREATE TABLE documents (id INT PRIMARY KEY, name TEXT, docType TEXT, date TEXT, partyName TEXT, orgNo TEXT, vatNo TEXT);
 ```
 
 ## search query
 ```sql
 -- insert document 
-INSERT INTO documents (id, name, docType, date, partyName, orgNo) VALUES (1, 'eranga', 'INVOICE', '2017/07/25', 'telia', '4422333')
+INSERT INTO documents (id, name, docType, date, partyName, orgNo, vatNO) VALUES (1, 'eranga', 'INVOICE', '2017/07/25', 'telia', '4422333', '783333')
 
 -- search document
 SELECT * from documents;
@@ -82,6 +85,7 @@ SELECT * FROM documents WHERE expr(documents_index, '{
 dev.localhost:8080/api/v1/documents
 dev.localhost:8080/api/v1/documents/1
 dev.localhost:8080/api/v1/documents?name=eranga
+dev.localhost:8080/api/v1/documents?name=eraga&orgNo=6881
 ```
 
 ## create document 
