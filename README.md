@@ -1,36 +1,36 @@
 # cassandra with lucene
 
-Dockerized cassandra with lucene plugin. The purpose of this cassandra project 
-is to keep documents with full text serach functionality  
+Dockerized cassandra with lucene plugin. The purpose of this cassandra project
+is to keep documents with full text serach functionality
 
-We are creating REST API againt this document storage. 
+We are creating REST API againt this document storage.
 
 # cassandra usage
 
 ## create table
 ```sql
 -- create keyspace with replication 1
-CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 1};
+CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 1}
 
 -- create keyspace with replication 3
-CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 3};
+CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 3}
 
 -- create table
 use senz
-CREATE TABLE documents (id INT PRIMARY KEY, name TEXT, docType TEXT, date TEXT, partyName TEXT, orgNo TEXT, vatNo TEXT);
+CREATE TABLE documents (id INT PRIMARY KEY, name TEXT, docType TEXT, date TEXT, partyName TEXT, orgNo TEXT, vatNo TEXT)
 ```
 
 ## search query
 ```sql
--- insert document 
+-- insert document
 INSERT INTO documents (id, name, docType, date, partyName, orgNo, vatNO) VALUES (1, 'eranga', 'INVOICE', '2017/07/25', 'telia', '4422333', '783333')
 
 -- search document
-SELECT * from documents;
+SELECT * from documents
 SELECT * FROM documents where id = 1
 
 -- this query will fail since no index for name
-SELECT * FROM documents where name = 'eranga' 
+SELECT * FROM documents where name = 'eranga'
 ```
 
 ## create lucene index
@@ -49,7 +49,7 @@ WITH OPTIONS = {
          partyname: {type: "string"}
       }
    }'
-};
+}
 ```
 
 ## lucene query
@@ -57,7 +57,7 @@ WITH OPTIONS = {
 -- with one field match
 SELECT * FROM documents WHERE expr(documents_index, '{
     query : {type:"match", field:"name", value:"eranga"}
-}');
+}')
 
 -- with multiple field match
 SELECT * FROM documents WHERE expr(documents_index, '{
@@ -65,20 +65,20 @@ SELECT * FROM documents WHERE expr(documents_index, '{
         {type:"match", field:"name", value:"eranga"},
         {type:"match", field:"doctype", value:"invoice"}
     ]
-}');
+}')
 
 -- with wildcard filter
 SELECT * FROM documents WHERE expr(documents_index, '{
     filter: [
-        {type: "wildcard", field:"name", value:"eraga"}, 
-        {type: "wildcard", field:"doctype", value:"INVOICE"}, 
-        {type: "wildcard", field:"partyname", value:"*"}, 
+        {type: "wildcard", field:"name", value:"eraga"},
+        {type: "wildcard", field:"doctype", value:"INVOICE"},
+        {type: "wildcard", field:"partyname", value:"*"},
         {type: "wildcard", field:"orgno", value:"*"}
     ]
 }')
 ```
 
-# REST API usage 
+# REST API usage
 
 ## API end points
 ```
@@ -88,9 +88,9 @@ dev.localhost:8080/api/v1/documents?name=eranga
 dev.localhost:8080/api/v1/documents?name=eraga&orgNo=6881
 ```
 
-## create document 
+## create document
 ```
-# http POST 
+# http POST
 curl \
     -H "Content-Type: application/json" \
     -X POST http://localhost:8080/api/v1/documents \
@@ -107,4 +107,3 @@ curl \
         }
     }'
 ```
-
