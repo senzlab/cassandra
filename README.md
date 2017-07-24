@@ -17,6 +17,19 @@ use senz
 CREATE TABLE documents (id INT PRIMARY KEY, name TEXT, docType TEXT, date TEXT, partyName TEXT, orgNo TEXT, vatNo TEXT);
 ```
 
+## search query
+```sql
+-- insert document 
+INSERT INTO documents (id, name, docType, date, partyName, orgNo) VALUES (1, 'eranga', 'INVOICE', '2017/07/25', 'telia', '4422333')
+
+-- search document
+SELECT * from documents;
+SELECT * FROM documents where id = 1
+
+-- this query will fail since no index for name
+SELECT * FROM documents where name = 'eranga' 
+```
+
 ## create lucene index
 
 ```sql
@@ -36,7 +49,7 @@ WITH OPTIONS = {
 };
 ```
 
-## query
+## lucene query
 ```sql
 -- with one field match
 SELECT * FROM documents WHERE expr(documents_index, '{
