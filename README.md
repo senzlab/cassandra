@@ -92,7 +92,9 @@ dev.localhost:8080/api/v1/documents?name=eraga&orgNo=6881
 ```
 # http POST
 curl \
+    -u john:123 \
     -H "Content-Type: application/json" \
+    -H 'Authorization:Basic john:123' \
     -X POST http://localhost:8080/api/v1/documents \
     -d '{
         "name": "telia",
