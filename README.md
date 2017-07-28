@@ -43,6 +43,8 @@ SELECT * FROM documents where id = 1
 SELECT * FROM documents where name = 'eranga'
 ```
 
+# cassandra with lucene
+
 ## create lucene index
 
 ```sql
@@ -84,6 +86,52 @@ SELECT * FROM documents WHERE expr(documents_index, '{
         {type: "wildcard", field:"doctype", value:"INVOICE"},
         {type: "wildcard", field:"partyname", value:"*"},
         {type: "wildcard", field:"orgno", value:"*"}
+    ]
+}')
+```
+
+## lucene with user define types
+```sql
+-- create address type
+CREATE TYPE address (
+    country TEXT,
+    country_code TEXT,
+    town TEXT
+)
+
+-- create table with address
+CREATE TABLE documents (
+    id TEXT PRIMARY KEY,
+    name TEXT,
+    doctype TEXT,
+    sender_address frozen <address>
+)
+
+-- create lucene index with udt
+CREATE CUSTOM INDEX documents_index ON documents ()
+USING 'com.stratio.cassandra.lucene.Index'
+WITH OPTIONS = {
+   'refresh_seconds': '1',
+   'schema': '{
+      fields: {
+         "id": {type: "integer"},
+         "name": {type: "string"},
+         "doctype": {type: "string"},
+         "sender_address.country": {type: "string"},
+         "sender_address.town": {type: "string"}
+      }
+   }'
+}
+
+-- insert data
+INSERT INTO documents (id, name, doctype, sender_address) VALUES ('3', 'eranga', 'INVOICE', {country: 'sweden', town: 'goth'})
+
+-- lucen search with udt
+SELECT * FROM documents WHERE expr(documents_index, '{
+    filter: [
+        {type: "wildcard", field:"name", value:"eranga"},
+        {type: "wildcard", field:"doctype", value:"INVOICE"},
+        {type: "wildcard", field:"sender_address.country", value:"sweden"}
     ]
 }')
 ```
