@@ -5,6 +5,16 @@ is to keep documents with full text serach functionality
 
 We are creating REST API againt this document storage.
 
+# build and run
+
+```docker
+# build 
+docker build erangaeb:cassandra:0.1
+
+# run
+docker run -p 9160:9160 -p 9042:9042 erangaeb/cassandra:0.1
+```
+
 # cassandra usage
 
 ## create table
