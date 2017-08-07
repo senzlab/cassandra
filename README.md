@@ -8,10 +8,21 @@ is achive full text serach via cassandra with the help of lucene plugin.
 docker build erangaeb:cassandra:0.1
 ```
 
-## run docker
+## run single cassandra 
 
 ```docker
-docker run -p 9160:9160 -p 9042:9042 erangaeb/cassandra:0.1
+docker run -d -p 9160:9160 -p 9042:9042 erangaeb/cassandra:0.1
+```
+
+## run cassandra cluser
+
+```docker
+# seed node
+docker run -d --name c1 -p 9160:9160 -p 9042:9042 erangaeb/cassandra:0.1
+
+# other nodes with seed parameter
+docker run -d --name c2 -p 9170:9160 -p 9052:9042 -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' c1)" erangaeb/cassandra:0.1
+docker run -d --name c3 -p 9180:9160 -p 9062:9042 -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' c1)" erangaeb/cassandra:0.1
 ```
 
 # cassandra usage
