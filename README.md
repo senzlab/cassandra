@@ -89,6 +89,14 @@ SELECT * FROM documents WHERE expr(documents_index, '{
         {type: "wildcard", field:"orgno", value:"*"}
     ]
 }')
+
+
+SELECT * FROM documents WHERE expr(documents_index, '{
+    filter: [
+        {type: "wildcard", field:"auth_company_id", value:"pagero"},
+        {type: "wildcard", field:"document_identifier", value:"INVOICE"}
+    ]
+}')
 ```
 
 ## lucene with user define types
