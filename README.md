@@ -1,9 +1,7 @@
 # dockrize cassandra and lucene
 
 Dockerized cassandra with lucene plugin. The purpose of this cassandra project
-is to keep documents with full text serach functionality
-
-We are creating REST API againt this document storage.
+is achive full text serach via cassandra with the help of lucene plugin.
 
 ## build docker
 ```docker
