@@ -14,15 +14,62 @@ docker build erangaeb:cassandra:0.1
 docker run -d -p 9160:9160 -p 9042:9042 erangaeb/cassandra:0.1
 ```
 
-## run cassandra cluser
+## run cassandra cluser(same host)
 
 ```docker
 # seed node
-docker run -d --name c1 -p 9160:9160 -p 9042:9042 erangaeb/cassandra:0.1
+docker run -d \
+--name c1 \
+-p 9160:9160 \
+-p 9042:9042 \
+erangaeb/cassandra:0.1
 
 # other nodes with seed parameter
-docker run -d --name c2 -p 9170:9160 -p 9052:9042 -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' c1)" erangaeb/cassandra:0.1
-docker run -d --name c3 -p 9180:9160 -p 9062:9042 -e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' c1)" erangaeb/cassandra:0.1
+docker run -d \
+--name c2 \
+-p 9170:9160 \
+-p 9052:9042 \
+-e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' c1)" \
+erangaeb/cassandra:0.1
+
+docker run -d \
+--name c3 \
+-p 9180:9160 \
+-p 9062:9042 \
+-e CASSANDRA_SEEDS="$(docker inspect --format='{{ .NetworkSettings.IPAddress }}' c1)" \
+erangaeb/cassandra:0.1
+```
+
+## run cassandra cluser(multiple hosts)
+
+```
+# host1(seed node)  - 10.4.1.15
+# host2             - 10.4.1.16
+# host3             - 10.4.1.17
+
+# host1 - seed node
+docker run -d \
+-e CASSANDRA_BROADCAST_ADDRESS=10.4.1.15 \
+-p 7000:7000 \
+-p 9042:9042 \
+-p 9060:9060 \
+erangaeb/cassandra:0.4
+
+# host2 - normal node  
+docker run -d \ 
+-e CASSANDRA_BROADCAST_ADDRESS=10.4.1.16 \
+-e CASSANDRA_SEEDS=10.4.1.15 \
+-p 9042:9042 -p 7000:7000 \
+-p 9060:9060 \
+erangaeb/cassandra:0.4
+
+# host3 - normal node  
+docker run -d \ 
+-e CASSANDRA_BROADCAST_ADDRESS=10.4.1.17 \
+-e CASSANDRA_SEEDS=10.4.1.15 \
+-p 9042:9042 -p 7000:7000 \
+-p 9060:9060 \
+erangaeb/cassandra:0.4
 ```
 
 # cassandra usage
