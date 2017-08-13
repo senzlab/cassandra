@@ -5,13 +5,16 @@ is achive full text serach via cassandra with the help of lucene plugin.
 
 ## build docker
 ```docker
-docker build erangaeb:cassandra:0.1
+docker build --tag erangaeb:cassandra:0.1 .
 ```
 
 ## run single cassandra 
 
 ```docker
-docker run -d -p 9160:9160 -p 9042:9042 erangaeb/cassandra:0.1
+docker run -d \
+-p 9160:9160 \
+-p 9042:9042 \
+erangaeb/cassandra:0.1
 ```
 
 ## run cassandra cluser(same host)
