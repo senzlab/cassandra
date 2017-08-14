@@ -80,10 +80,10 @@ erangaeb/cassandra:0.4
 ## create table
 ```sql
 -- create keyspace with replication 1
-CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 1}
+CREATE KEYSPACE zchain WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 1}
 
 -- create keyspace with replication 3
-CREATE KEYSPACE senz WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 3}
+CREATE KEYSPACE zchain WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor': 3}
 
 -- create table
 use senz
