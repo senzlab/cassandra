@@ -51,6 +51,6 @@ WORKDIR /opt/cassandra
 EXPOSE 7000 7001 7199 9042 9160
 
 # data dir
-VOLUME ["/var/lib/cassandra"]
+VOLUME ["/opt/cassandra/data"]
 
 CMD ["/opt/cassandra/bin/cassandra", "-f"]
