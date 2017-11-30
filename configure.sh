@@ -2,10 +2,12 @@
 CASSANDRA_HOME=/opt/cassandra
 CASSANDRA_HOST="$(hostname --ip-address)"
 CLUSTER_NAME="senzchain"
+WRITE_TIME_OUT=20000
 
 sed -ri 's/^(# )?('"cluster_name"':).*/\2 '"$CLUSTER_NAME"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 sed -ri 's/^(# )?('"listen_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 sed -ri 's/^(# )?('"rpc_address"':).*/\2 '"$CASSANDRA_HOST"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
+sed -ri 's/^(# )?('"write_request_timeout_in_ms"':).*/\2 '"$WRITE_TIME_OUT"'/' "$CASSANDRA_HOME/conf/cassandra.yaml"
 
 # config broadcast address
 if [ -z "$CASSANDRA_BROADCAST_ADDRESS" ]; then

@@ -50,4 +50,7 @@ WORKDIR /opt/cassandra
 # 7000: ipc; 7001: tls ipc; 7199: jmx; 9042: cql; 9160: thrift
 EXPOSE 7000 7001 7199 9042 9160
 
+# data dir
+VOLUME ["/var/lib/cassandra"]
+
 CMD ["/opt/cassandra/bin/cassandra", "-f"]
